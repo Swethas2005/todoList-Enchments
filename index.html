@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Todo List</title>
+  <style>
+    /* Add your CSS styles here */
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .todo-container {
+      width: 400px;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      background-color: #fff;
+    }
+    h1 {
+      text-align: center;
+    }
+    .todo-form {
+      margin-bottom: 20px;
+    }
+    .todo-form input[type="text"] {
+      width: calc(100% - 80px);
+      padding: 8px;
+      margin-right: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    .todo-form button {
+      padding: 8px 16px;
+      background-color: #4CAF50;
+      width: 70px;
+      height: 36px;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .todo-form button:hover {
+      background-color: #45a049;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      margin-bottom: 10px;
+    }
+    li input[type="checkbox"] {
+      margin-right: 10px;
+      font-size: 20px;
+      margin-left: 80px;
+      cursor: pointer;
+      width: 20px;
+      height: 20px;
+    }
+    li button {
+      text-align: center;
+      width: 60px;
+      height: 30px;
+      padding: 4px 8px;
+      background-color: #f44336;
+      margin-left: 50px;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    li button:hover {
+      background-color: #d32f2f;
+    }
+  </style>
+</head>
+<body>
+  <div class="todo-container">
+    <div id="root"></div>
+  </div>
+
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+    const TodoApp = () => {
+      const [tasks, setTasks] = React.useState([]);
+
+      const addTask = (taskName) => {
+        const newTask = {
+          id: Date.now(),
+          name: taskName,
+          completed: false
+        };
+        setTasks([...tasks, newTask]);
+      };
+
+      const toggleTaskCompletion = (taskId) => {
+        setTasks(tasks.map(task =>
+          task.id === taskId ? { ...task, completed: !task.completed } : task
+        ));
+      };
+
+      const removeTask = (taskId) => {
+        setTasks(tasks.filter(task => task.id !== taskId));
+      };
+
+      return (
+        <div>
+          <h1>Todo List</h1>
+          <form className="todo-form"
+            onSubmit={(event) => {
+              event.preventDefault();
+              const taskInput = event.target.elements.task;
+              if (taskInput.value.trim() !== "") {
+                addTask(taskInput.value);
+                taskInput.value = "";
+              }
+            }}
+          >
+            <input
+              type="text"
+              name="task"
+              placeholder="Add task"
+            />
+            <button type="submit">Submit</button>
+          </form>
+          <ul>
+            {tasks.map(task => (
+              <li
+                key={task.id}
+                style={{
+                  textDecoration: task.completed ? 'line-through' : 'none'
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={task.completed}
+                  onChange={() => toggleTaskCompletion(task.id)}
+                />
+                {task.name}
+                <button onClick={() => removeTask(task.id)}>Delete</button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      );
+    };
+
+    const reactRoot= ReactDOM.createRoot(document.getElementById("root"));
+    reactRoot.render(<TodoApp/>);
+
+  </script>
+</body>
+</html>
